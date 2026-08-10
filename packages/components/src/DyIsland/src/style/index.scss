@@ -1,0 +1,155 @@
+.dy-island {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 32px;
+  background: var(--bg-final);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 0;
+  user-select: none;
+  overflow: visible;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.is-expanded {
+    width: 210px;
+    height: auto;
+    min-height: 72px;
+    border-radius: 24px;
+    padding: 10px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    cursor: default;
+    z-index: 9999;
+  }
+}
+
+/* ====== SVG 流光边框 ====== */
+.glow-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.glow-path {
+  animation: dashFlow var(--glow-speed, 3s) linear infinite;
+}
+
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -1040;
+  }
+}
+
+/* ====== 收起态 ====== */
+.dy-island__time {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* ====== 顶部：消息 / 设备名 ====== */
+.dy-island__msg-wrap {
+  display: flex;
+  justify-content: center;
+
+  &--placeholder {
+    opacity: 0.6;
+  }
+}
+
+.dy-island__device {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.dy-island__message {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  animation: fadeIn 0.3s ease 0.15s both;
+}
+
+/* ====== 底部行：时间 + 工具 ====== */
+.dy-island__bottom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dy-island__time-expanded {
+  font-weight: 600;
+  font-size: 12px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.dy-island__tools {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.dy-island__tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  &--more {
+    background: transparent;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+}
+
+.dy-island__tool-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

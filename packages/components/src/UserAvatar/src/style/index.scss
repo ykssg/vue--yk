@@ -1,0 +1,34 @@
+.user-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+}
+
+.user-avatar__img,
+.user-avatar__frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.user-avatar__glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ua-glow-path {
+  animation: uaDashFlow var(--ua-glow-speed, 3s) linear infinite;
+}
+
+@keyframes uaDashFlow {
+  to {
+    stroke-dashoffset: -560;
+  }
+}
