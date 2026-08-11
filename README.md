@@ -1,122 +1,143 @@
-# vuecomp-starter
+# YK-UI
 
-说明文档：https://windlil.github.io/vuecomp-starter/
-
-## 介绍
-开源的 Vue3 + Typescript 组件库开发模板，简单轻松构建功能完善的组件库，按照约定的目录编排来进行开发，使开发者只需关注组件的开发以及说明文档的编写，无需关注其他繁琐的配置。
-
-支持说明文档网站的自动部署，可以帮助一键部署到GithubPage上。
-
-相信许多小伙伴都希望能自己开发出一套组件库，这是很有成就感的一件事，但是大部分人都困在组件库开发的前期构建以及打包阶段，而vuecomp-starter就是为此而生。
-
-## 特性
-- 约定式开发，大幅减轻开发者工作量
-- 已经完成组件库前期构建和打包阶段，只需要关注到组件的开发
-- 按照约定目录进行开发，打包后的组件库能够支持按需导入，完美配合TreeShaking
-- 集成Vitepress，按照约定位置创建文件会自动配置路由，只需要关注文档内容的编写
-- 对测试环境支持约定式路由写法，无需编写路由文件
-- 配备了完善的自动化创建脚本，减少繁琐的文件创建过程
-- 通过简单的修改环境变量来修改开发方式
-- 支持说明文档自动化部署
-
-> ⚠ 建议在初次开发的时候详细阅读该文档
+基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。
 
 ## 安装
-```
-# install degit
-npm  i -g degit
 
-# clone starter
-degit windlil/vuecomp-starter [your project name]
-
-# switch to your project directory
-cd [your project name]
-
-# install dependence
-pnpm i
-
-# open docs
-pnpm docs:dev
+```bash
+pnpm install
 ```
 
-## scripts命令介绍
-- `pnpm build`: 对组件库进行打包。
-- `pnpm docs:dev`: 开启说明文档服务。
-- `pnpm comp:play`: 开启组件测试环境。
-- `pnpm docs:build`: 打包说明文档。
+## 快速开始
 
-自动化脚本：
-- `pnpm comp:create [component name]`: 创建组件文件，并自动引入到导出根文件。
-- `pnpm comp:new [component name]`: 创建测试环境组件文件。
-- `pnpm docs:new [component name]`: 创建新的组件说明文档。
-- `pnpm component:create [component name]`: `pnpm comp:create`、`pnpm comp:new`、`pnpm docs:new`合并命令，推荐使用。
+```ts
+// main.ts
+import { createApp } from 'vue'
+import YkUI from '@ykssg/components'
+import '@ykssg/components/style'
 
-## env配置介绍
-⚠在初次开发的时候需要对根目录的.env文件进行配置修改
-```
-# CSS预处理器 默认支持sass和less
-CSS_PREPROCESSOR = 'scss'
-# 用于添加组件命名前缀，建议采用首字母大写格式，最后生成的组件会采取类似这种格式:<yk-button></yk-button>
-COMPONENT_NAME = 'Yk'
+const app = createApp(App)
+app.use(YkUI)
+app.mount('#app')
 ```
 
-
-## 组件开发约定
-组件开发建议采用以下目录结构：
+```vue
+<!-- 全局注册后即可使用 -->
+<template>
+  <yk-button>按钮</yk-button>
+  <yk-dy-island v-model:message="msg" />
+  <yk-user-avatar avatar="xxx.jpg" model="flow" />
+</template>
 ```
-├─packages
-|    ├─components
-|    |     ├─style
-|    |     |   └index.scss          // 组件库全局样式
-|    |     ├─src
-|    |     |  ├─components.ts       // 导出所有组件
-|    |     |  ├─index.ts            // 全局注册所有组件
-|    |     |  ├─button              // 组件文件
-|    |     |  |   ├─index.ts        // 在此进行导出和局部注册
-|    |     |  |   ├─src             // ❗实际开发中只需要关注到src下的文件
-|    |     |  |   |  ├─button.vue 
-|    |     |  |   |  ├─style
-|    |     |  |   |  |   └index.scss
+
+## 组件
+
+### DyIsland 灵动岛
+
+顶部灵动岛组件，收起时显示时间，有消息时展开并显示设备状态、工具、消息内容。
+
+```vue
+<yk-dy-island
+  v-model:message="msg"
+  :tools="[
+    { icon: '🎵', name: '音乐', onClick: handleMusic },
+    { icon: '⏱', name: '计时器' },
+  ]"
+  :glow-colors="['#ff00c8', '#00e5ff']"
+  :glow-speed="3"
+  background-color="#000"
+  :background-model="0.55"
+  background-image=""
+/>
 ```
-建议采用命令`pnpm component:create [component name]`来创建新组件，帮助自动完成繁琐的引入和创建步骤。
 
-如果不采用自动命令，则按照模板已创建的示例组件的模式来进行开发，这种方法会相当繁琐，因此强烈建议使用命令的方式进行新组件创建！
+**Props**
 
-## 说明文档开发约定
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `v-model:message` | `string` | `''` | 消息内容，非空自动展开；点击外部清空 |
+| `tools` | `Tool[]` | `[]` | 工具列表，最多显示 4 个 + 更多按钮 |
+| `glow-colors` | `string[]` | 粉紫蓝 | 消息时边框流光颜色 |
+| `glow-speed` | `number` | `3` | 流光旋转速度（秒） |
+| `background-color` | `string` | `'#000'` | 背景色，支持 hex |
+| `background-model` | `number` | `0.55` | 背景透明度 0~1 |
+| `background-image` | `string` | `''` | 背景图 URL |
 
+**Tool 接口**
+
+```ts
+interface Tool {
+  name: string       // 工具名（title 提示）
+  icon?: string      // 图标（emoji 或文字）
+  onClick?: () => void
+}
 ```
-├─docs
-|  ├─index.md               // 文档首页内容
-|  ├─guide              
-|  |   ├─features.md        // 特性
-|  |   ├─started.md         // 快速上手
-|  |   ├─components         // 各组件的具体说明
-|  |   |     └button.md
-```
-只需要关注 `docs/guide/components/` 下 md 文件的编写，会自动创建新的侧边栏内容以及路由，不需要关注其它的配置文件。
 
-⚠️注意，需要在md文件采用以下的格式来确定侧边栏的名称：
-```md
 ---
-sider_text="按钮 button"
+
+### UserAvatar 用户头像
+
+头像 + 外框叠加组件，支持图片外框、流光外框、包裹流光三种模式。
+
+```vue
+<yk-user-avatar
+  avatar="头像URL"
+  model="over"
+  frame="外框URL"
+  :image="1"
+  :glow-colors="['#ff00c8', '#00e5ff']"
+  :glow-speed="3"
+/>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `avatar` | `string` | `''` | 头像图片 URL |
+| `model` | `'image'` / `'flow'` / `'over'` | `'image'` | 外框模式 |
+| `frame` | `string` | `''` | 图片外框 URL（model=image 时） |
+| `image` | `0` / `1` | `1` | `1` 头像在上 / `0` 外框在上 |
+| `glow-colors` | `string[]` | 粉紫蓝 | 流光颜色（model=flow/over 时） |
+| `glow-speed` | `number` | `3` | 流光速度（秒） |
+
+**model 说明**
+
+| 值 | 效果 |
+|------|------|
+| `'image'` | 图片外框，通过 `frame` 传入 |
+| `'flow'` | 彩色光带沿边框流动 |
+| `'over'` | 完整渐变边框 + 白色高光流转 |
+
 ---
+
+### Button 按钮
+
+```vue
+<yk-button>默认</yk-button>
+<yk-button type="primary">主要</yk-button>
+<yk-button type="success">成功</yk-button>
+<yk-button type="danger">危险</yk-button>
+<yk-button type="warning">警告</yk-button>
 ```
-组件说明文档具体内容可参考示例组件。
 
-## 自动化部署
-具体文件在 `./.github/workflows/deploy.yaml`
-```
-示例：
-git tag docs@v0.0.1
+**Props**
 
-git add .
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `type` | `string` | - | `primary` / `success` / `danger` / `warning` |
 
-git commit -m 'chore: update'
+---
 
-git push
+## 开发
 
-git push origin docs@v0.0.1
+```bash
+pnpm comp:play    # 启动 playground 调试
+pnpm docs:dev     # 启动 VitePress 文档
+pnpm build        # 构建组件库
+pnpm comp:create  # 创建新组件脚手架
 ```
 
 ## License
+
 MIT
