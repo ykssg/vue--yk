@@ -129,6 +129,81 @@ interface Tool {
 
 ---
 
+### Carousel 轮播图
+
+轮播图组件，支持静态数据和后端 API 两种模式，带导航圆点和自动播放。
+
+```vue
+<!-- 静态模式 -->
+<yk-carousel
+  model="static"
+  :images="['/img/1.jpg', '/img/2.jpg', '/img/3.jpg']"
+  :interval="3000"
+  height="400px"
+/>
+
+<!-- API 模式 -->
+<yk-carousel
+  model="api"
+  api-url="/api/banner/list"
+  :interval="5000"
+/>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `model` | `'static'` / `'api'` | `'static'` | 数据模式：前端定义 / 后端接口 |
+| `images` | `CarouselImage[]` / `string[]` | `[]` | 静态模式的图片列表 |
+| `api-url` | `string` | `''` | API 模式的接口地址 |
+| `interval` | `number` | `3000` | 自动播放间隔（ms） |
+| `height` | `string` | `'300px'` | 轮播图高度 |
+| `autoplay` | `boolean` | `true` | 是否自动播放 |
+| `show-arrow` | `boolean` | `true` | 是否显示左右箭头 |
+
+**Events**
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `change` | `index: number` | 切换图片时触发 |
+
+**YkImage 子组件**
+
+```vue
+<yk-image src="图片地址" alt="描述" fit="cover" />
+```
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `src` | `string` | `''` | 图片地址 |
+| `alt` | `string` | `''` | 替代文本 |
+| `fit` | `'cover'` / `'contain'` / `'fill'` / `'none'` / `'scale-down'` | `'cover'` | 图片填充方式 |
+
+---
+
+### Layout 布局
+
+页面布局容器，通过三层 div 实现内容始终左右居中，无论浏览器如何缩放。
+
+```vue
+<yk-layout l-width="800px">
+  <div>内容始终居中</div>
+</yk-layout>
+
+<yk-layout l-width="60%">
+  <div>响应式宽度</div>
+</yk-layout>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `l-width` | `string` | `'1200px'` | 内容区宽度，支持 px / % / vw |
+
+---
+
 ## 开发
 
 ```bash
