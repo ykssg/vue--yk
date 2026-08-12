@@ -3,3 +3,5 @@ export * from './DyIsland/index';
 export * from './UserAvatar/index';
 export * from './Carousel/index';
 export * from './Layout/index';
+export * from './Navbar/index';
+export * from './TextNav/index';
