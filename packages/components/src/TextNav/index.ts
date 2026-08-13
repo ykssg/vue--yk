@@ -1,10 +1,10 @@
 import component from './src/TextNav.vue'
 import { withInstall } from '../../../utils/withInstall'
 
-const YkTextnav = withInstall(component)
+const YkTextNav = withInstall(component)
 
 export {
-  YkTextnav
+  YkTextNav
 }
 
-export default YkTextnav
+export default YkTextNav

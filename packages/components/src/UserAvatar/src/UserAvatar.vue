@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useId } from '../../../../utils/useId'
 
 defineOptions({
   name: 'YkUserAvatar'
@@ -7,38 +8,50 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   avatar?: string
+  avatarAlt?: string
   frame?: string
-  image?: 0 | 1
+  frameAlt?: string
+  imageOnTop?: boolean
   model?: 'image' | 'flow' | 'over'
   glowColors?: string[]
   glowSpeed?: number
 }>(), {
   avatar: '',
+  avatarAlt: 'avatar',
   frame: '',
-  image: 1,
+  frameAlt: 'frame',
+  imageOnTop: true,
   model: 'image',
   glowColors: () => ['#ff00c8', '#00e5ff', '#7b2fff'],
   glowSpeed: 3,
 })
 
-const showImageFrame = computed(() => props.model === 'image' && props.frame)
+// 层级常量：外框 < 图片 < 流光
+const Z_BASE = 0
+const Z_IMAGE = 2
+const Z_GLOW = 10
+
+const glowGradientId = useId('ua-glow-grad')
+const glowBlurId = useId('ua-glow-blur')
+
+const showImageFrame = computed(() => props.model === 'image' && !!props.frame)
 const showGlow = computed(() => props.model === 'flow' || props.model === 'over')
 
-// flow: 作为外框，受 image 控制层级
+// flow: 作为外框，受 imageOnTop 控制层级
 // over: 包裹全部，始终在最外层
-const glowZ = computed(() => props.model === 'over' ? 10 : (props.image === 1 ? 0 : 2))
-const avatarZ = computed(() => props.image === 1 ? 2 : 0)
-const frameZ = computed(() => props.image === 1 ? 0 : 2)
-
-const glowGradientId = 'ua-glow-grad'
+const glowZ = computed(() =>
+  props.model === 'over' ? Z_GLOW : props.imageOnTop ? Z_BASE : Z_IMAGE
+)
+const avatarZ = computed(() => (props.imageOnTop ? Z_IMAGE : Z_BASE))
+const frameZ = computed(() => (props.imageOnTop ? Z_BASE : Z_IMAGE))
 </script>
 
 <template>
-  <div class="user-avatar">
+  <div class="yk-user-avatar">
     <!-- SVG 流光 -->
     <svg
       v-if="showGlow"
-      class="user-avatar__glow"
+      class="yk-user-avatar__glow"
       :style="{ zIndex: glowZ }"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 72 72"
@@ -52,7 +65,7 @@ const glowGradientId = 'ua-glow-grad'
             :stop-color="c"
           />
         </linearGradient>
-        <filter id="ua-glow-blur">
+        <filter :id="glowBlurId">
           <feGaussianBlur stdDeviation="1.5" />
         </filter>
       </defs>
@@ -66,9 +79,9 @@ const glowGradientId = 'ua-glow-grad'
           :stroke="`url(#${glowGradientId})`"
           stroke-dasharray="60 500"
           stroke-linecap="round"
-          filter="url(#ua-glow-blur)"
+          :filter="`url(#${glowBlurId})`"
           opacity="0.5"
-          class="ua-glow-path"
+          class="yk-user-avatar__glow-path"
           :style="{ animationDuration: `${glowSpeed}s` }"
         />
         <rect
@@ -78,7 +91,7 @@ const glowGradientId = 'ua-glow-grad'
           :stroke="`url(#${glowGradientId})`"
           stroke-dasharray="40 500"
           stroke-linecap="round"
-          class="ua-glow-path"
+          class="yk-user-avatar__glow-path"
           :style="{ animationDuration: `${glowSpeed}s` }"
         />
       </template>
@@ -90,7 +103,7 @@ const glowGradientId = 'ua-glow-grad'
           fill="none"
           stroke-width="2"
           :stroke="`url(#${glowGradientId})`"
-          filter="url(#ua-glow-blur)"
+          :filter="`url(#${glowBlurId})`"
           opacity="0.6"
         />
         <rect
@@ -108,7 +121,7 @@ const glowGradientId = 'ua-glow-grad'
           stroke-dasharray="30 500"
           stroke-linecap="round"
           opacity="0.8"
-          class="ua-glow-path"
+          class="yk-user-avatar__glow-path"
           :style="{ animationDuration: `${glowSpeed}s` }"
         />
       </template>
@@ -116,18 +129,18 @@ const glowGradientId = 'ua-glow-grad'
 
     <img
       v-if="avatar"
-      class="user-avatar__img"
+      class="yk-user-avatar__img"
       :src="avatar"
+      :alt="avatarAlt"
       :style="{ zIndex: avatarZ }"
-      alt="avatar"
     />
 
     <img
       v-if="showImageFrame"
-      class="user-avatar__frame"
+      class="yk-user-avatar__frame"
       :src="frame"
+      :alt="frameAlt"
       :style="{ zIndex: frameZ }"
-      alt="frame"
     />
   </div>
 </template>

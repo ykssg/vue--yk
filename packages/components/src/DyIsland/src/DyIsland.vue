@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useId } from '../../../../utils/useId'
 
 defineOptions({
   name: 'YkDyIsland'
@@ -18,7 +19,7 @@ const props = withDefaults(defineProps<{
   glowSpeed?: number
   backgroundColor?: string
   backgroundImage?: string
-  backgroundModel?: number
+  backgroundAlpha?: number
 }>(), {
   message: '',
   tools: () => [],
@@ -26,45 +27,22 @@ const props = withDefaults(defineProps<{
   glowSpeed: 3,
   backgroundColor: '#000',
   backgroundImage: '',
-  backgroundModel: 0.55,
+  backgroundAlpha: 0.55,
 })
 
 const emit = defineEmits<{
   'update:message': [value: string]
 }>()
 
+const glowGradientId = useId('dy-glow-grad')
+const glowBlurId = useId('dy-glow-blur')
+
 const islandRef = ref<HTMLElement>()
-
-function onClickOutside(e: MouseEvent) {
-  if (!props.message) return
-  if (islandRef.value && !islandRef.value.contains(e.target as Node)) {
-    emit('update:message', '')
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('mousedown', onClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('mousedown', onClickOutside)
-})
-
 const isHover = ref(false)
 const isExpanded = computed(() => !!props.message || isHover.value)
 
 const now = ref(new Date())
-let timer: ReturnType<typeof setInterval>
-
-onMounted(() => {
-  timer = setInterval(() => {
-    now.value = new Date()
-  }, 1000)
-})
-
-onUnmounted(() => {
-  clearInterval(timer)
-})
+let timer: ReturnType<typeof setInterval> | undefined
 
 const timeStr = computed(() => {
   const h = now.value.getHours()
@@ -73,17 +51,27 @@ const timeStr = computed(() => {
 })
 
 const visibleTools = computed(() => props.tools.slice(0, 4))
-const hasMore = computed(() => props.tools.length > 4)
+
+function onClickOutside(e: MouseEvent) {
+  if (!props.message) return
+  if (islandRef.value && !islandRef.value.contains(e.target as Node)) {
+    emit('update:message', '')
+  }
+}
 
 function hexToRgb(hex: string): [number, number, number] | null {
-  hex = hex.replace('#', '')
-  if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
-  if (hex.length !== 6) return null
-  return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)]
+  const clean = hex.trim().replace(/^#/, '')
+  let full = clean
+  if (clean.length === 3) {
+    full = clean.split('').map((c) => c + c).join('')
+  }
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) return null
+  const n = parseInt(full, 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
 }
 
 const finalBg = computed(() => {
-  const alpha = props.backgroundModel
+  const alpha = props.backgroundAlpha
   let color = props.backgroundColor
 
   const rgb = hexToRgb(color)
@@ -97,13 +85,24 @@ const finalBg = computed(() => {
   return color
 })
 
-const glowGradientId = 'glow-grad'
+onMounted(() => {
+  document.addEventListener('mousedown', onClickOutside)
+  // 分钟级显示，60s 刷新一次即可，避免每秒触发重渲染
+  timer = setInterval(() => {
+    now.value = new Date()
+  }, 60_000)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('mousedown', onClickOutside)
+  if (timer) clearInterval(timer)
+})
 </script>
 
 <template>
   <div
     ref="islandRef"
-    class="dy-island"
+    class="yk-dy-island"
     :class="{ 'is-expanded': isExpanded, 'is-glowing': !!message }"
     :style="{
       '--glow-speed': `${glowSpeed}s`,
@@ -115,7 +114,7 @@ const glowGradientId = 'glow-grad'
     <!-- SVG 流光边框 -->
     <svg
       v-if="message"
-      class="glow-svg"
+      class="yk-dy-island__glow-svg"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="none"
     >
@@ -128,7 +127,7 @@ const glowGradientId = 'glow-grad'
             :stop-color="c"
           />
         </linearGradient>
-        <filter id="glow-blur">
+        <filter :id="glowBlurId">
           <feGaussianBlur stdDeviation="2" />
         </filter>
       </defs>
@@ -141,9 +140,9 @@ const glowGradientId = 'glow-grad'
         :stroke="`url(#${glowGradientId})`"
         stroke-dasharray="70 1000"
         stroke-linecap="round"
-        filter="url(#glow-blur)"
+        :filter="`url(#${glowBlurId})`"
         opacity="0.5"
-        class="glow-path"
+        class="yk-dy-island__glow-path"
       />
       <!-- 内层锐利光带 -->
       <rect
@@ -154,38 +153,35 @@ const glowGradientId = 'glow-grad'
         :stroke="`url(#${glowGradientId})`"
         stroke-dasharray="50 1000"
         stroke-linecap="round"
-        class="glow-path"
+        class="yk-dy-island__glow-path"
       />
     </svg>
 
     <!-- 收起态 -->
     <template v-if="!isExpanded">
-      <span class="dy-island__time">{{ timeStr }}</span>
+      <span class="yk-dy-island__time">{{ timeStr }}</span>
     </template>
 
     <!-- 展开态 -->
     <template v-else>
-      <div v-if="message" class="dy-island__msg-wrap">
-        <span class="dy-island__message">--- {{ message }} ---</span>
+      <div v-if="message" class="yk-dy-island__msg-wrap">
+        <span class="yk-dy-island__message">--- {{ message }} ---</span>
       </div>
-      <div v-else class="dy-island__msg-wrap dy-island__msg-wrap--placeholder">
-        <span class="dy-island__device">设备</span>
+      <div v-else class="yk-dy-island__msg-wrap yk-dy-island__msg-wrap--placeholder">
+        <span class="yk-dy-island__device">设备</span>
       </div>
 
-      <div class="dy-island__bottom">
-        <span class="dy-island__time-expanded">{{ timeStr }}</span>
-        <div class="dy-island__tools" v-if="tools.length">
+      <div class="yk-dy-island__bottom">
+        <span class="yk-dy-island__time-expanded">{{ timeStr }}</span>
+        <div v-if="tools.length" class="yk-dy-island__tools">
           <button
             v-for="tool in visibleTools"
             :key="tool.name"
-            class="dy-island__tool"
+            class="yk-dy-island__tool"
             :title="tool.name"
             @click="tool.onClick"
           >
-            <span class="dy-island__tool-icon">{{ tool.icon || tool.name }}</span>
-          </button>
-          <button v-if="hasMore" class="dy-island__tool dy-island__tool--more" title="更多">
-            ···
+            <span class="yk-dy-island__tool-icon">{{ tool.icon || tool.name }}</span>
           </button>
         </div>
       </div>

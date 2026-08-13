@@ -1,19 +1,19 @@
-.mobile-layout {
+.yk-mobile-layout {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 
-  // 上方内容区，占 90%
+  // 上方内容区，占比由 ratio 控制
   &__content {
-    flex: 0 0 90%;
+    flex: 0 0 auto;
     min-height: 0;
     overflow: auto;
   }
 
-  // 下方导航区，占 10%，顶部边框
-  &__nav {
-    flex: 0 0 10%;
+  // 下方导航区，顶部边框
+  &__footer {
+    flex: 0 0 auto;
     box-sizing: border-box;
     border-top: 1px solid #e5e5e5;
   }

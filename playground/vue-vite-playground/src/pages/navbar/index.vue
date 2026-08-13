@@ -42,8 +42,8 @@ function addNav() {
   closeModal()
 }
 
-// ---- 演示2: listurl 从接口获取 + h 设置高度 ----
-const listurl = 'https://api.example.com/navbar/list'
+// ---- 演示2: apiUrl 从接口获取 + height 设置高度 ----
+const apiUrl = 'https://api.example.com/navbar/list'
 </script>
 
 <template>
@@ -59,10 +59,10 @@ const listurl = 'https://api.example.com/navbar/list'
       </div>
     </div>
 
-    <!-- 演示2: listurl + h -->
+    <!-- 演示2: apiUrl + height -->
     <div class="demo-section">
-      <p class="demo-label">listurl 接口获取 + h="48"</p>
-      <yk-navbar :listurl="listurl" :h="48" />
+      <p class="demo-label">apiUrl 接口获取 + height="48"</p>
+      <yk-navbar :api-url="apiUrl" :height="48" />
     </div>
 
     <!-- 弹窗 -->

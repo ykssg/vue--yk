@@ -1,61 +1,73 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-
-interface Navbar {
-  id: string;
-  name: string;
-  image: string;
-  path?: string;
-}
-
-const props = defineProps<{
-  navList?: Navbar[];
-  listurl?: string;
-  h?: number | string;
-}>();
-
-const items = ref<Navbar[]>(props.navList || [])
-
-onMounted(async () => {
-  if (props.listurl) {
-    await fetchList()
-  }
-})
-
-watch(() => props.listurl, async () => {
-  if (props.listurl) {
-    await fetchList()
-  }
-})
-
-async function fetchList() {
-  try {
-    const res = await fetch(props.listurl!)
-    const data = await res.json()
-    items.value = data
-  } catch {
-    // keep current items on error
-  }
-}
+import { ref, computed, onMounted, watch } from 'vue'
 
 defineOptions({
-  name: "YkNavbar",
-});
+  name: 'YkNavbar'
+})
+
+interface NavbarItem {
+  id: string
+  name: string
+  image: string
+  path?: string
+}
+
+const props = withDefaults(defineProps<{
+  navList?: NavbarItem[]
+  apiUrl?: string
+  height?: number | string
+}>(), {
+  navList: () => [],
+  apiUrl: '',
+  height: '',
+})
+
+const emit = defineEmits<{
+  error: [error: Error]
+}>()
+
+const items = ref<NavbarItem[]>(props.navList)
+
+const heightStyle = computed(() => {
+  if (!props.height) return undefined
+  return { height: typeof props.height === 'number' ? `${props.height}px` : props.height }
+})
+
+watch(() => props.navList, (list) => {
+  items.value = list ?? []
+})
+
+watch(() => props.apiUrl, (url) => {
+  if (url) fetchList(url)
+})
+
+onMounted(() => {
+  if (props.apiUrl) fetchList(props.apiUrl)
+})
+
+async function fetchList(url: string) {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+    const list = Array.isArray(data) ? data : data?.list ?? data?.data
+    if (Array.isArray(list)) items.value = list
+  } catch (err) {
+    emit('error', err as Error)
+  }
+}
 </script>
 
 <template>
-  <div
-    class="overall"
-    :style="h ? { height: typeof h === 'number' ? h + 'px' : h } : undefined"
-  >
-    <div v-for="item in items" :key="item.id" class="btn">
-      <a v-if="item.path" :href="item.path" class="btn-link">
-        <img :src="item.image" :alt="item.name" class="btn-img" />
-        <p class="btn-text">{{ item.name }}</p>
+  <div class="yk-navbar" :style="heightStyle">
+    <div v-for="item in items" :key="item.id" class="yk-navbar__item">
+      <a v-if="item.path" :href="item.path" class="yk-navbar__link">
+        <img :src="item.image" :alt="item.name" class="yk-navbar__img" />
+        <p class="yk-navbar__text">{{ item.name }}</p>
       </a>
-      <span v-else class="btn-link">
-        <img :src="item.image" :alt="item.name" class="btn-img" />
-        <p class="btn-text">{{ item.name }}</p>
+      <span v-else class="yk-navbar__link">
+        <img :src="item.image" :alt="item.name" class="yk-navbar__img" />
+        <p class="yk-navbar__text">{{ item.name }}</p>
       </span>
     </div>
   </div>

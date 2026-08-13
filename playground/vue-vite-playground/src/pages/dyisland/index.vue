@@ -25,7 +25,7 @@ function simulateMsg() {
     :glow-colors="['#ff00c8', '#00e5ff', '#7b2fff', '#ff00c8']"
     :glow-speed="3"
     background-color="#1a1a2e"
-    :background-model="0.6"
+    :background-alpha="0.6"
   />
 
   <div class="demo">

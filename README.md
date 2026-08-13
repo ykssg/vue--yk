@@ -46,7 +46,7 @@ app.mount('#app')
   :glow-colors="['#ff00c8', '#00e5ff']"
   :glow-speed="3"
   background-color="#000"
-  :background-model="0.55"
+  :background-alpha="0.55"
   background-image=""
 />
 ```
@@ -56,11 +56,11 @@ app.mount('#app')
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `v-model:message` | `string` | `''` | 消息内容，非空自动展开；点击外部清空 |
-| `tools` | `Tool[]` | `[]` | 工具列表，最多显示 4 个 + 更多按钮 |
+| `tools` | `Tool[]` | `[]` | 工具列表，最多显示 4 个 |
 | `glow-colors` | `string[]` | 粉紫蓝 | 消息时边框流光颜色 |
 | `glow-speed` | `number` | `3` | 流光旋转速度（秒） |
 | `background-color` | `string` | `'#000'` | 背景色，支持 hex |
-| `background-model` | `number` | `0.55` | 背景透明度 0~1 |
+| `background-alpha` | `number` | `0.55` | 背景透明度 0~1 |
 | `background-image` | `string` | `''` | 背景图 URL |
 
 **Tool 接口**
@@ -86,7 +86,7 @@ interface Tool {
   avatar="头像URL"
   model="over"
   frame="外框URL"
-  :image="1"
+  :image-on-top="true"
   :glow-colors="['#ff00c8', '#00e5ff']"
   :glow-speed="3"
 />
@@ -97,9 +97,11 @@ interface Tool {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `avatar` | `string` | `''` | 头像图片 URL |
+| `avatar-alt` | `string` | `'avatar'` | 头像图片替代文本 |
 | `model` | `'image'` / `'flow'` / `'over'` | `'image'` | 外框模式 |
 | `frame` | `string` | `''` | 图片外框 URL（model=image 时） |
-| `image` | `0` / `1` | `1` | `1` 头像在上 / `0` 外框在上 |
+| `frame-alt` | `string` | `'frame'` | 外框图片替代文本 |
+| `image-on-top` | `boolean` | `true` | `true` 头像在上 / `false` 外框在上 |
 | `glow-colors` | `string[]` | 粉紫蓝 | 流光颜色（model=flow/over 时） |
 | `glow-speed` | `number` | `3` | 流光速度（秒） |
 
@@ -129,7 +131,7 @@ interface Tool {
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `type` | `string` | - | `primary` / `success` / `danger` / `warning` |
+| `type` | `'default'` / `'primary'` / `'success'` / `'danger'` / `'warning'` | `'default'` | 按钮类型 |
 
 > ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
 
@@ -173,6 +175,7 @@ interface Tool {
 | 事件 | 参数 | 说明 |
 |------|------|------|
 | `change` | `index: number` | 切换图片时触发 |
+| `error` | `Error` | 接口请求失败时触发 |
 
 > ⚠️ **免责声明**：本组件 `api-url` 接口为公开只读数据，不涉及用户隐私或敏感操作，地址在前端代码中可见不构成安全漏洞。若需加密或鉴权，请在项目的 API 管理文件中自行配置请求拦截器。
 
@@ -195,12 +198,16 @@ interface Tool {
 页面布局容器，通过三层 div 实现内容始终左右居中，无论浏览器如何缩放。
 
 ```vue
-<yk-layout l-width="800px">
+<yk-layout width="800px">
   <div>内容始终居中</div>
 </yk-layout>
 
-<yk-layout l-width="60%">
+<yk-layout width="60%">
   <div>响应式宽度</div>
+</yk-layout>
+
+<yk-layout :width="960">
+  <div>数字自动补 px</div>
 </yk-layout>
 ```
 
@@ -208,7 +215,7 @@ interface Tool {
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `l-width` | `string` | `'1200px'` | 内容区宽度，支持 px / % / vw |
+| `width` | `number` / `string` | `'1200px'` | 内容区宽度，支持 px / % / vw，数字自动补 px |
 
 > ⚠️ **免责声明**：本组件为纯 UI 布局组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
 
@@ -228,21 +235,27 @@ interface Tool {
 />
 
 <!-- 接口获取 + 设置高度 -->
-<yk-navbar listurl="/api/navbar/list" :h="48" />
+<yk-navbar api-url="/api/navbar/list" :height="48" />
 ```
 
 **Props**
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `navList` | `Navbar[]` | `[]` | 导航项数组 |
-| `listurl` | `string` | — | 接口地址，传入后自动 fetch 获取数据 |
-| `h` | `number \| string` | — | 整体高度，数字自动补 px |
+| `navList` | `NavbarItem[]` | `[]` | 导航项数组 |
+| `api-url` | `string` | `''` | 接口地址，传入后自动 fetch 获取数据 |
+| `height` | `number` / `string` | `''` | 整体高度，数字自动补 px |
 
-**Navbar 接口**
+**Events**
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `error` | `Error` | 接口请求失败时触发 |
+
+**NavbarItem 接口**
 
 ```ts
-interface Navbar {
+interface NavbarItem {
   id: string      // 唯一标识
   name: string    // 显示名称
   image: string   // 图片地址
@@ -250,7 +263,7 @@ interface Navbar {
 }
 ```
 
-> ⚠️ **免责声明**：本组件 `listurl` 接口为公开只读数据，不涉及用户隐私或敏感操作，地址在前端代码中可见不构成安全漏洞。若需加密或鉴权，请在项目的 API 管理文件中自行配置请求拦截器。因未合理配置后端鉴权或滥用该接口导致的一切问题，与本组件开发者无关。
+> ⚠️ **免责声明**：本组件 `api-url` 接口为公开只读数据，不涉及用户隐私或敏感操作，地址在前端代码中可见不构成安全漏洞。若需加密或鉴权，请在项目的 API 管理文件中自行配置请求拦截器。因未合理配置后端鉴权或滥用该接口导致的一切问题，与本组件开发者无关。
 
 ---
 
@@ -259,15 +272,28 @@ interface Navbar {
 玻璃质感文字导航组件，胶囊容器 + 左上角高光 + 上升气泡动画，hover 时毛玻璃模糊 + 顶部高光。
 
 ```vue
-<yk-textnav model="首页，组件，文档，关于" a-v0="/" a-v2="/textnav" />
+<yk-text-nav :items="[
+  { text: '首页', path: '/' },
+  { text: '组件' },
+  { text: '文档', path: '/textnav' },
+  { text: '关于' },
+]" />
 ```
 
 **Props**
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `model` | `string` | `''` | 导航内容，用 `，` / `,` / `、` 分隔 |
-| `a-v0` / `a-v1` / `a-v2` … | `string` | — | 第 N 项（从 0 开始）的跳转链接；不传则渲染为 `<span>` |
+| `items` | `TextNavItem[]` | `[]` | 导航项数组 |
+
+**TextNavItem 接口**
+
+```ts
+interface TextNavItem {
+  text: string    // 显示文本
+  path?: string   // 跳转链接，可选；不传渲染 <span>
+}
+```
 
 > ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
 
@@ -275,7 +301,7 @@ interface Navbar {
 
 ### MobileLayout 移动端布局
 
-上下两段式移动端布局：上方内容区占 90%，下方导航区占 10%，导航区顶部带边框。
+上下两段式移动端布局：上方内容区默认占 90%，下方导航区占 10%，导航区顶部带边框。比例可通过 `ratio` 配置。
 
 ```vue
 <yk-mobile-layout>
@@ -286,12 +312,18 @@ interface Navbar {
 </yk-mobile-layout>
 ```
 
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `ratio` | `number` | `90` | 上方内容区占比（%），下方导航区自动为 `100 - ratio` |
+
 **Slots**
 
 | 插槽 | 说明 |
 |------|------|
-| 默认 | 上方内容区，占 90% |
-| `footer` | 下方导航区，占 10%，顶部带 1px 边框 |
+| 默认 | 上方内容区 |
+| `footer` | 下方导航区，顶部带 1px 边框 |
 
 ---
 

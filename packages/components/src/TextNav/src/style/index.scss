@@ -1,5 +1,5 @@
 // ==================== 文字导航容器 ====================
-.textnav {
+.yk-text-nav {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -9,7 +9,7 @@
 }
 
 // 玻璃质感背景层（含左上角高光 + 气泡，裁剪在胶囊内）
-.textnav__bg {
+.yk-text-nav__bg {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -42,7 +42,7 @@
 }
 
 // ==================== 气泡 ====================
-.textnav__bubble {
+.yk-text-nav__bubble {
   position: absolute;
   bottom: -26px;
   border-radius: 50%;
@@ -53,11 +53,11 @@
     rgba(255, 255, 255, 0) 100%
   );
   box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.6);
-  animation: textnav-bubble-rise var(--bubble-duration, 8s) linear
+  animation: yk-text-nav-bubble-rise var(--bubble-duration, 8s) linear
     var(--bubble-delay, 0s) infinite;
 }
 
-@keyframes textnav-bubble-rise {
+@keyframes yk-text-nav-bubble-rise {
   0% {
     transform: translate(0, 0) scale(0.6);
     opacity: 0;
@@ -78,7 +78,7 @@
 }
 
 // ==================== 文字项 ====================
-.textnav__item {
+.yk-text-nav__item {
   position: relative;
   z-index: 2;
   padding: 7px 16px;

@@ -1,4 +1,4 @@
-.overall {
+.yk-navbar {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -46,28 +46,69 @@
     );
     pointer-events: none;
   }
-}
 
-// ---------- 导航按钮 ----------
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  border-radius: 12px;
-  padding: 6px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.06),
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-  transition:
-    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    background 0.3s ease;
-  z-index: 1;
-  cursor: pointer;
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 12px;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+    transition:
+      transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      background 0.3s ease;
+    z-index: 1;
+    cursor: pointer;
 
-  &-link {
+    &:hover {
+      background: rgba(255, 255, 255, 0.22);
+      box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgba(255, 255, 255, 0.18) inset;
+      transform: translateY(-2px);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 6%;
+        right: 6%;
+        height: 40%;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.28) 0%,
+          rgba(255, 255, 255, 0.04) 60%,
+          transparent 100%
+        );
+        border-radius: 11px 11px 50% 50%;
+        pointer-events: none;
+      }
+
+      .yk-navbar__img {
+        transform: scale(1.22);
+        filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+      }
+
+      .yk-navbar__text {
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+    }
+  }
+
+  &__link {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -77,7 +118,7 @@
     flex-direction: column;
   }
 
-  &-img {
+  &__img {
     width: 22px;
     height: 22px;
     object-fit: contain;
@@ -87,7 +128,7 @@
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   }
 
-  &-text {
+  &__text {
     margin: 0;
     font-size: 13px;
     font-weight: 500;
@@ -95,47 +136,5 @@
     color: #1a1a2e;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
     letter-spacing: 0.02em;
-  }
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.22);
-    box-shadow:
-      0 8px 28px rgba(0, 0, 0, 0.12),
-      0 2px 8px rgba(0, 0, 0, 0.06),
-      0 0 0 1px rgba(255, 255, 255, 0.18) inset;
-    transform: translateY(-2px);
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 1px;
-      left: 6%;
-      right: 6%;
-      height: 40%;
-      background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.28) 0%,
-        rgba(255, 255, 255, 0.04) 60%,
-        transparent 100%
-      );
-      border-radius: 11px 11px 50% 50%;
-      pointer-events: none;
-    }
-
-    .btn-img {
-      transform: scale(1.22);
-      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
-    }
-
-    .btn-text {
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-    }
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.08),
-      0 0 0 1px rgba(255, 255, 255, 0.12) inset;
   }
 }

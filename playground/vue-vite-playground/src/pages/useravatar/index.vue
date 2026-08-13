@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const layer = ref<0 | 1>(1)
+const layer = ref(true)
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const layer = ref<0 | 1>(1)
           avatar="https://i.pravatar.cc/150?img=5"
           model="image"
           frame="https://api.dicebear.com/7.x/bottts/svg?seed=ring"
-          :image="layer"
+          :image-on-top="layer"
         />
         <span>model="image"</span>
       </div>
@@ -23,7 +23,7 @@ const layer = ref<0 | 1>(1)
         <YkUserAvatar
           avatar="https://i.pravatar.cc/150?img=8"
           model="flow"
-          :image="layer"
+          :image-on-top="layer"
         />
         <span>model="flow"</span>
       </div>
@@ -32,14 +32,14 @@ const layer = ref<0 | 1>(1)
         <YkUserAvatar
           avatar="https://i.pravatar.cc/150?img=12"
           model="over"
-          :image="layer"
+          :image-on-top="layer"
         />
         <span>model="over"</span>
       </div>
     </div>
 
-    <button @click="layer = layer === 1 ? 0 : 1">
-      切换层级: image={{ layer }}
+    <button @click="layer = !layer">
+      切换层级: imageOnTop={{ layer }}
     </button>
   </div>
 </template>

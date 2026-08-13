@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import YkImage from './Image.vue'
 
 defineOptions({
@@ -30,25 +30,28 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  'change': [index: number]
+  change: [index: number]
+  error: [error: Error]
 }>()
 
-const internalIndex = ref(1)
-const transitionEnabled = ref(true)
+// 与 CSS 中 track transition 时长保持一致
+const TRANSITION_MS = 500
+
 const apiImages = ref<CarouselImage[]>([])
 const loading = ref(false)
+const internalIndex = ref(1) // 克隆数组中的索引
+const transitionEnabled = ref(true)
 let timer: ReturnType<typeof setInterval> | null = null
+let resetTimer: ReturnType<typeof setTimeout> | null = null
+let isMounted = false
 
 const displayImages = computed<CarouselImage[]>(() => {
   if (props.model === 'api') {
     return apiImages.value
   }
-  return props.images.map((img) => {
-    if (typeof img === 'string') {
-      return { src: img, alt: '' }
-    }
-    return img
-  })
+  return props.images.map((img) =>
+    typeof img === 'string' ? { src: img, alt: '' } : img
+  )
 })
 
 const totalSlides = computed(() => displayImages.value.length)
@@ -60,45 +63,58 @@ const clonedImages = computed<CarouselImage[]>(() => {
   return [imgs[imgs.length - 1], ...imgs, imgs[0]]
 })
 
-// 实际图片索引 (去除克隆位的偏移)
+// 真实图片索引（去除克隆位偏移）
 const realIndex = computed(() => {
   const n = totalSlides.value
-  if (n === 0) return 0
-  if (internalIndex.value === 0) return n - 1
-  if (internalIndex.value === n + 1) return 0
-  return internalIndex.value - 1
+  if (n <= 1) return 0
+  return (internalIndex.value - 1 + n) % n
 })
 
 function goTo(idx: number) {
-  if (totalSlides.value === 0) return
+  if (totalSlides.value <= 1) return
   transitionEnabled.value = true
+  clearTimeout(resetTimer)
   internalIndex.value = idx + 1
-  emit('change', idx)
+  startAutoplay()
 }
 
 function prev() {
-  if (totalSlides.value === 0) return
+  if (totalSlides.value <= 1) return
   transitionEnabled.value = true
+  clearTimeout(resetTimer)
   internalIndex.value--
-  emit('change', realIndex.value)
 }
 
 function next() {
-  if (totalSlides.value === 0) return
+  if (totalSlides.value <= 1) return
   transitionEnabled.value = true
+  clearTimeout(resetTimer)
   internalIndex.value++
-  emit('change', realIndex.value)
 }
 
-function onTransitionEnd() {
+// 跨越首尾克隆位后，过渡结束后无感复位到真实图片
+watch(internalIndex, (val) => {
   const n = totalSlides.value
-  if (internalIndex.value === 0) {
-    transitionEnabled.value = false
-    internalIndex.value = n
-  } else if (internalIndex.value === n + 1) {
-    transitionEnabled.value = false
-    internalIndex.value = 1
+  if (n <= 1) return
+  if (val === 0) {
+    scheduleReset(n)
+  } else if (val === n + 1) {
+    scheduleReset(1)
   }
+  emit('change', realIndex.value)
+})
+
+function scheduleReset(target: number) {
+  clearTimeout(resetTimer)
+  resetTimer = setTimeout(() => {
+    transitionEnabled.value = false
+    internalIndex.value = target
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        transitionEnabled.value = true
+      })
+    })
+  }, TRANSITION_MS)
 }
 
 function startAutoplay() {
@@ -121,68 +137,70 @@ async function fetchImages() {
   loading.value = true
   try {
     const response = await fetch(props.apiUrl)
-    const data = await response.json()
-    if (Array.isArray(data)) {
-      apiImages.value = data.map((item: any) =>
-        typeof item === 'string' ? { src: item, alt: '' } : item
-      )
-    } else if (data.images && Array.isArray(data.images)) {
-      apiImages.value = data.images.map((item: any) =>
-        typeof item === 'string' ? { src: item, alt: '' } : item
-      )
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
     }
-  } catch {
-    // fetch failed silently
+    const data = await response.json()
+    const list = Array.isArray(data) ? data : data?.images
+    apiImages.value = Array.isArray(list)
+      ? list
+          .map((item: unknown): CarouselImage | null => {
+            if (typeof item === 'string') return { src: item, alt: '' }
+            if (item && typeof item === 'object' && 'src' in item) {
+              const img = item as CarouselImage
+              return { src: img.src, alt: img.alt ?? '' }
+            }
+            return null
+          })
+          .filter((img): img is CarouselImage => img !== null)
+      : []
+  } catch (err) {
+    emit('error', err as Error)
   } finally {
     loading.value = false
   }
 }
 
-watch(() => props.images, () => {
-  internalIndex.value = 1
-})
-
-watch(totalSlides, () => {
-  internalIndex.value = totalSlides.value > 0 ? 1 : 0
-  startAutoplay()
+watch(totalSlides, (n) => {
+  internalIndex.value = n > 1 ? 1 : 0
+  if (isMounted) startAutoplay()
 })
 
 onMounted(() => {
+  isMounted = true
   if (props.model === 'api') {
     fetchImages()
   }
-  nextTick(() => {
-    startAutoplay()
-  })
+  startAutoplay()
 })
 
 onUnmounted(() => {
   stopAutoplay()
+  clearTimeout(resetTimer)
 })
 </script>
 
 <template>
   <div
-    class="carousel"
+    class="yk-carousel"
     :style="{ height: props.height }"
     @mouseenter="stopAutoplay"
     @mouseleave="startAutoplay"
   >
-    <div v-if="loading" class="carousel__loading">加载中...</div>
+    <div v-if="loading" class="yk-carousel__loading">加载中...</div>
 
-    <div v-else-if="totalSlides === 0" class="carousel__empty">暂无图片</div>
+    <div v-else-if="totalSlides === 0" class="yk-carousel__empty">暂无图片</div>
 
     <template v-else>
       <div
-        class="carousel__track"
-        :class="{ 'carousel__track--no-transition': !transitionEnabled }"
+        class="yk-carousel__track"
+        :class="{ 'yk-carousel__track--no-transition': !transitionEnabled }"
         :style="{ transform: `translateX(-${internalIndex * 100}%)` }"
-        @transitionend="onTransitionEnd"
       >
         <div
           v-for="(img, idx) in clonedImages"
-          :key="idx"
-          class="carousel__slide"
+          :key="`${idx}-${img.src}`"
+          class="yk-carousel__slide"
         >
           <YkImage :src="img.src" :alt="img.alt || ''" fit="cover" />
         </div>
@@ -190,24 +208,24 @@ onUnmounted(() => {
 
       <button
         v-if="showArrow && totalSlides > 1"
-        class="carousel__arrow carousel__arrow--prev"
+        class="yk-carousel__arrow yk-carousel__arrow--prev"
         @click="prev"
       >
         ‹
       </button>
       <button
         v-if="showArrow && totalSlides > 1"
-        class="carousel__arrow carousel__arrow--next"
+        class="yk-carousel__arrow yk-carousel__arrow--next"
         @click="next"
       >
         ›
       </button>
 
-      <div v-if="totalSlides > 1" class="carousel__dots">
+      <div v-if="totalSlides > 1" class="yk-carousel__dots">
         <span
           v-for="(_, idx) in displayImages"
           :key="idx"
-          class="carousel__dot"
+          class="yk-carousel__dot"
           :class="{ 'is-active': idx === realIndex }"
           @click="goTo(idx)"
         />

@@ -1,19 +1,25 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 defineOptions({
   name: 'YkLayout'
 })
 
-withDefaults(defineProps<{
-  lWidth?: string
+const props = withDefaults(defineProps<{
+  width?: number | string
 }>(), {
-  lWidth: '1200px'
+  width: '1200px'
 })
+
+const widthStyle = computed(() =>
+  typeof props.width === 'number' ? `${props.width}px` : props.width
+)
 </script>
 
 <template>
-  <div class="layout">
-    <div class="layout__container" :style="{ width: lWidth }">
-      <div class="layout__content">
+  <div class="yk-layout">
+    <div class="yk-layout__container" :style="{ width: widthStyle }">
+      <div class="yk-layout__content">
         <slot />
       </div>
     </div>

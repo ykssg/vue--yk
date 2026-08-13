@@ -1,11 +1,17 @@
 <script setup lang="ts">
+const items = [
+  { text: '首页', path: '/' },
+  { text: '组件' },
+  { text: '文档', path: '/textnav' },
+  { text: '关于' },
+]
 </script>
 
 <template>
   <div class="demo-wrapper">
     <div class="demo-section">
       <p class="demo-label">文字导航 · 玻璃质感 + 气泡</p>
-      <yk-textnav model="首页，组件，文档，关于" a-v0="/" a-v2="/textnav" />
+      <yk-text-nav :items="items" />
     </div>
   </div>
 </template>

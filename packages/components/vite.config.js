@@ -4,7 +4,7 @@ import dts from 'vite-plugin-dts'
 
 export default defineConfig({
   build: {
-    target: 'modules',
+    target: 'es2015',
     outDir: 'es',
     emptyOutDir: false,
     minify: false,
@@ -41,7 +41,7 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       name: 'vuecomp',
-      formats: ['es', 'cjs', 'umd']
+      formats: ['es', 'cjs']
     },
   },
   plugins: [
