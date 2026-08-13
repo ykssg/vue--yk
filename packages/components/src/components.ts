@@ -5,3 +5,4 @@ export * from './Carousel/index';
 export * from './Layout/index';
 export * from './Navbar/index';
 export * from './TextNav/index';
+export * from './MobileLayout/index';
