@@ -1,6 +1,6 @@
 # YK-UI
 
-基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。
+基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。当前版本 **v1.0.0**。
 
 ## 安装
 
@@ -31,6 +31,17 @@ app.mount('#app')
 ```
 
 ## 组件
+
+| 组件 | 标签 | 说明 |
+|------|------|------|
+| [DyIsland 灵动岛](#dyisland-灵动岛) | `<yk-dy-island>` | 顶部灵动岛，显示时间与消息 |
+| [UserAvatar 用户头像](#useravatar-用户头像) | `<yk-user-avatar>` | 头像 + 外框叠加 |
+| [Button 按钮](#button-按钮) | `<yk-button>` | 基础按钮 |
+| [Carousel 轮播图](#carousel-轮播图) | `<yk-carousel>` | 轮播图，静态/API 两种模式 |
+| [Layout 布局](#layout-布局) | `<yk-layout>` | 居中布局容器 |
+| [Navbar 导航栏](#navbar-导航栏) | `<yk-navbar>` | 玻璃质感导航栏 |
+| [TextNav 文字导航](#textnav-文字导航) | `<yk-text-nav>` | 文字导航 |
+| [MobileLayout 移动端布局](#mobilelayout-移动端布局) | `<yk-mobile-layout>` | 上下两段式移动端布局 |
 
 ### DyIsland 灵动岛
 
@@ -335,6 +346,20 @@ pnpm docs:dev     # 启动 VitePress 文档
 pnpm build        # 构建组件库
 pnpm comp:create  # 创建新组件脚手架
 ```
+
+## 从 0.x 迁移
+
+v1.0.0 对部分组件 API 做了 breaking change，迁移对照如下：
+
+| 组件 | 旧 API | 新 API |
+|------|--------|--------|
+| TextNav | `model="首页，组件"` + `a-v0="/"` | `:items="[{ text: '首页', path: '/' }]"` |
+| Navbar | `listurl` / `h` | `api-url` / `height` |
+| Layout | `l-width` | `width` |
+| DyIsland | `background-model` | `background-alpha` |
+| UserAvatar | `image`（`0` / `1`） | `image-on-top`（`boolean`） |
+
+同时所有组件的 CSS 类名统一为 `yk-` 前缀，`<yk-textnav>` 更名为 `<yk-text-nav>`。
 
 ## License
 
