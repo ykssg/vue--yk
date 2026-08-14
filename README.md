@@ -42,6 +42,7 @@ app.mount('#app')
 | [Navbar 导航栏](#navbar-导航栏) | `<yk-navbar>` | 玻璃质感导航栏 |
 | [TextNav 文字导航](#textnav-文字导航) | `<yk-text-nav>` | 文字导航 |
 | [MobileLayout 移动端布局](#mobilelayout-移动端布局) | `<yk-mobile-layout>` | 上下两段式移动端布局 |
+| [SearchInput 搜索框](#searchinput-搜索框) | `<yk-search-input>` | 带搜索引擎切换的搜索框，含历史/推荐 |
 
 ### DyIsland 灵动岛
 
@@ -335,6 +336,59 @@ interface TextNavItem {
 |------|------|
 | 默认 | 上方内容区 |
 | `footer` | 下方导航区，顶部带 1px 边框 |
+
+---
+
+### SearchInput 搜索框
+
+带搜索引擎切换的搜索框组件。默认整体背景透明、点击后半透明，黑色边框。左侧图标可切换搜索引擎（百度/必应/谷歌/知乎/GitHub/B站/360/2345），右侧输入框支持历史记录（最多 5 条，存 localStorage）与热门推荐（最多 5 条），回车或点击搜索按钮触发搜索。
+
+```vue
+<!-- 默认（透明背景 + 黑色边框） -->
+<yk-search-input />
+
+<!-- 自定义背景色 / 文字颜色 -->
+<yk-search-input
+  background-color="rgba(255,255,255,0.3)"
+  text-color="#ffffff"
+/>
+
+<!-- 自定义背景图 -->
+<yk-search-input background-image="url('/bg.jpg')" />
+
+<!-- 监听搜索事件 -->
+<yk-search-input @search="onSearch" />
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `background-color` | `string` | `'transparent'` | 整体背景色，激活时叠加半透明层 |
+| `text-color` | `string` | `'#333333'` | 文字颜色 |
+| `background-image` | `string` | `''` | 背景图（CSS 值，如 `url('...')`） |
+| `engines` | `SearchEngine[]` | 8 个内置引擎 | 搜索引擎列表 |
+| `recommend` | `string[]` | 5 条默认词 | 热门推荐词（最多显示 5 条） |
+| `placeholder` | `string` | `'搜索...'` | 输入框占位文本 |
+| `history-key` | `string` | `'yk-searchinput-history'` | 历史记录 localStorage 键名 |
+
+**Events**
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `search` | `{ keyword: string; engine: SearchEngine }` | 回车 / 点击搜索 / 点击历史或推荐项时触发，同时新标签页打开对应引擎 |
+
+**SearchEngine 接口**
+
+```ts
+interface SearchEngine {
+  name: string   // 引擎名称
+  icon: string   // 图标（URL 或 data URL）
+  url: string    // 搜索地址，用 {keyword} 占位关键词
+}
+```
+
+> ⚠️ **免责声明**：本组件的搜索行为为公开的第三方搜索引擎 URL 跳转，不收集、不存储任何隐私数据；历史记录仅保存在浏览器本地 localStorage。因第三方搜索引擎的内容与行为导致的任何问题，与本组件开发者无关。
 
 ---
 

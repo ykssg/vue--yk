@@ -1,0 +1,227 @@
+.yk-searchinput {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #000;
+  border-radius: 10px;
+  background-color: transparent;
+  transition: box-shadow 0.2s ease;
+
+  // 激活时叠加的半透明层
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 0;
+  }
+
+  &.is-active::before {
+    opacity: 1;
+  }
+
+  &__box {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+  }
+
+  &__engine {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  &__engine-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    object-fit: contain;
+  }
+
+  &__engine-arrow {
+    display: inline-flex;
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  &__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    line-height: 1;
+    color: inherit;
+
+    &::placeholder {
+      color: inherit;
+      opacity: 0.45;
+    }
+  }
+
+  &__submit {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  // 搜索引擎下拉 / 历史记录下拉
+  .no-searchinput-img,
+  .no-searchinput-history {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 10;
+  }
+
+  .no-searchinput-img {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 4px;
+      border-radius: 8px;
+      color: inherit;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.06);
+      }
+
+      &.is-active {
+        background: rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    &__icon {
+      display: block;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+
+    &__name {
+      font-size: 12px;
+    }
+  }
+
+  .no-searchinput-history {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    &__title {
+      margin-bottom: 2px;
+      font-size: 12px;
+      color: inherit;
+      opacity: 0.55;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      color: inherit;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    &__text {
+      flex: 1;
+      font-size: 13px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    &__del {
+      flex: none;
+      padding: 0 2px;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font-size: 16px;
+      line-height: 1;
+      opacity: 0.5;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// 下拉面板过渡动画
+.yk-searchinput-fade-enter-active,
+.yk-searchinput-fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.yk-searchinput-fade-enter-from,
+.yk-searchinput-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
