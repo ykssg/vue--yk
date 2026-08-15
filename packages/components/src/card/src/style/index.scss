@@ -1,0 +1,58 @@
+.yk-card {
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: #2b2f3a;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &__top {
+    flex: 0 0 80%;
+    display: flex;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+
+  &__title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  &__bottom {
+    flex: 0 0 20%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    opacity: 0.9;
+  }
+
+  &__username {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__time {
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+}

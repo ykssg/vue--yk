@@ -1,0 +1,33 @@
+.yk-divider {
+  width: 80%;
+  margin: 16px auto;
+
+  &--solid {
+    border-top: 1px solid #dcdfe6;
+  }
+
+  &--dashed {
+    border-top: 1px dashed #dcdfe6;
+  }
+
+  &--dotted {
+    border-top: 1px dotted #dcdfe6;
+  }
+
+  &--double {
+    border-top: 3px double #dcdfe6;
+  }
+
+  &--string {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &__string {
+    font-size: 14px;
+    line-height: 1;
+    color: #909399;
+    letter-spacing: 2px;
+    user-select: none;
+  }
+}

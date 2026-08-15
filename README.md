@@ -43,6 +43,8 @@ app.mount('#app')
 | [TextNav 文字导航](#textnav-文字导航) | `<yk-text-nav>` | 文字导航 |
 | [MobileLayout 移动端布局](#mobilelayout-移动端布局) | `<yk-mobile-layout>` | 上下两段式移动端布局 |
 | [SearchInput 搜索框](#searchinput-搜索框) | `<yk-search-input>` | 带搜索引擎切换的搜索框，含历史/推荐 |
+| [Card 卡片](#card-卡片) | `<yk-card>` | 背景图卡片，可显示用户信息与创建时间 |
+| [Divider 分割线](#divider-分割线) | `<yk-divider>` | 五种样式的分割线 |
 
 ### DyIsland 灵动岛
 
@@ -389,6 +391,59 @@ interface SearchEngine {
 ```
 
 > ⚠️ **免责声明**：本组件的搜索行为为公开的第三方搜索引擎 URL 跳转，不收集、不存储任何隐私数据；历史记录仅保存在浏览器本地 localStorage。因第三方搜索引擎的内容与行为导致的任何问题，与本组件开发者无关。
+
+---
+
+### Card 卡片
+
+带背景图/渐变的卡片组件，标题最多显示两行并自动省略，底部可选显示用户名与创建时间。创建时间支持日期字符串与时间戳，今年内显示「月日」，跨年显示「年月日」。
+
+```vue
+<yk-card
+  background-image="linear-gradient(135deg, #667eea, #764ba2)"
+  text-color="#ffffff"
+  user-model="true"
+  username="杨堃"
+  time="2026-08-15"
+>
+  卡片标题
+</yk-card>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `background-image` | `string` | `''` | 背景图（CSS 值，如 `url('...')` 或渐变） |
+| `text-color` | `string` | `'#ffffff'` | 文字颜色 |
+| `user-model` | `boolean` | `false` | 是否显示用户信息，兼容 `"true"` / `"false"` 字符串 |
+| `username` | `string` | `''` | 用户名 |
+| `time` | `string` | `''` | 创建时间（日期字符串或时间戳） |
+
+> ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。背景图请使用公开、可访问的图片地址，因图片内容、版权或第三方资源加载失败导致的问题，与本组件开发者无关。
+
+---
+
+### Divider 分割线
+
+分割线组件，支持 `solid` 实线、`dashed` 虚线、`dotted` 点线、`double` 双线、`string` 自定义符号五种样式。
+
+```vue
+<yk-divider model="solid" />
+<yk-divider model="dashed" />
+<yk-divider model="dotted" />
+<yk-divider model="double" />
+<yk-divider model="string" text="*" />
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `model` | `'solid'` / `'dashed'` / `'dotted'` / `'double'` / `'string'` | `'solid'` | 分割线样式 |
+| `text` | `string` | `'*'` | 自定义符号（`model` 为 `string` 时使用） |
+
+> ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
 
 ---
 
