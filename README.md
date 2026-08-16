@@ -1,6 +1,6 @@
 # YK-UI
 
-基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。当前版本 **v1.0.0**。
+基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。当前版本 **v1.11.2**。
 
 ## 安装
 
@@ -45,6 +45,7 @@ app.mount('#app')
 | [SearchInput 搜索框](#searchinput-搜索框) | `<yk-search-input>` | 带搜索引擎切换的搜索框，含历史/推荐 |
 | [Card 卡片](#card-卡片) | `<yk-card>` | 背景图卡片，可显示用户信息与创建时间 |
 | [Divider 分割线](#divider-分割线) | `<yk-divider>` | 五种样式的分割线 |
+| [Progress 进度条](#progress-进度条) | `<yk-progress>` | 三种形态的进度条（长条/环形/文字） |
 
 ### DyIsland 灵动岛
 
@@ -442,6 +443,44 @@ interface SearchEngine {
 |------|------|--------|------|
 | `model` | `'solid'` / `'dashed'` / `'dotted'` / `'double'` / `'string'` | `'solid'` | 分割线样式 |
 | `text` | `string` | `'*'` | 自定义符号（`model` 为 `string` 时使用） |
+
+> ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
+
+---
+
+### Progress 进度条
+
+进度条组件，支持 `strip` 长条、`ring` 环形、`text` 文字三种形态，长条形态支持头部贴图。
+
+```vue
+<!-- 长条（默认） -->
+<yk-progress model="strip" :value="60" />
+
+<!-- 长条 + 头部贴图 + 自定义颜色 -->
+<yk-progress
+  model="strip"
+  :value="60"
+  image="url('head.png')"
+  backgroundimage="#ebeef5"
+  topimage="#409eff"
+/>
+
+<!-- 环形 -->
+<yk-progress model="ring" :value="60" topimage="#e6a23c" />
+
+<!-- 文字 -->
+<yk-progress model="text" :value="60" />
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `model` | `'strip'` / `'ring'` / `'text'` | `'strip'` | 进度条形态 |
+| `value` | `number` | `0` | 当前进度值，范围 0 ~ 100 |
+| `image` | `string` | `''` | 长条头部贴图（CSS 背景值，如 `url('...')`），仅 `strip` 生效 |
+| `backgroundimage` | `string` | `'#ebeef5'` | 底层（轨道）颜色 |
+| `topimage` | `string` | `'#409eff'` | 顶部（已填充）颜色 |
 
 > ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
 

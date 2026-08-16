@@ -9,3 +9,4 @@ export * from './MobileLayout/index';
 export * from './SearchInput/index';
 export * from './card/index';
 export * from './divider/index';
+export * from './progress/index';
