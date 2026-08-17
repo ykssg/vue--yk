@@ -9,7 +9,7 @@ export default defineConfig({
     emptyOutDir: false,
     minify: false,
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', 'echarts'],
       input: ['./src/index.ts'],
       output: [
         {

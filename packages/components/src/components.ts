@@ -10,3 +10,8 @@ export * from './SearchInput/index';
 export * from './card/index';
 export * from './divider/index';
 export * from './progress/index';
+export * from './model/index';
+export * from './ContextMenu/index';
+export * from './LineChart/index';
+export * from './BarChart/index';
+export * from './PieChart/index';

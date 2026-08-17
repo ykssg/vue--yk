@@ -46,6 +46,11 @@ app.mount('#app')
 | [Card 卡片](#card-卡片) | `<yk-card>` | 背景图卡片，可显示用户信息与创建时间 |
 | [Divider 分割线](#divider-分割线) | `<yk-divider>` | 五种样式的分割线 |
 | [Progress 进度条](#progress-进度条) | `<yk-progress>` | 三种形态的进度条（长条/环形/文字） |
+| [Model 弹窗](#model-弹窗) | `<yk-model>` | 弹窗，v-model 控制显隐，可选图片与插槽 |
+| [ContextMenu 右键菜单](#contextmenu-右键菜单) | `<yk-context-menu>` | 自定义右键菜单，容器内右键触发 |
+| [LineChart 折线图](#linechart-折线图) | `<yk-line-chart>` | 基于 ECharts 的折线图 |
+| [BarChart 柱状图](#barchart-柱状图) | `<yk-bar-chart>` | 基于 ECharts 的区间柱状图 |
+| [PieChart 饼状图](#piechart-饼状图) | `<yk-pie-chart>` | 基于 ECharts 的饼状图 |
 
 ### DyIsland 灵动岛
 
@@ -483,6 +488,171 @@ interface SearchEngine {
 | `topimage` | `string` | `'#409eff'` | 顶部（已填充）颜色 |
 
 > ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
+
+---
+
+### Model 弹窗
+
+弹窗组件，从上到下居中布局：顶部标题栏（左侧标题 + 右侧 × 关闭按钮），主体依次为可选图片、文字、默认插槽（按钮/文字）。通过 `v-model` 控制显隐，点击关闭按钮或遮罩关闭。
+
+```vue
+<!-- 基本用法 -->
+<yk-model v-model="visible" title="提示" message="接入需要显示的文字的数据" />
+
+<!-- 自定义插槽 + 图片 -->
+<yk-model
+  v-model="visible"
+  title="确认操作"
+  text-color="#e6a23c"
+  image="https://example.com/img.png"
+>
+  <yk-button type="danger">取消</yk-button>
+  <yk-button type="primary">确定</yk-button>
+</yk-model>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `model-value` / `v-model` | `boolean` | `false` | 是否显示弹窗 |
+| `title` | `string` | `''` | 顶部标题 |
+| `message` | `string` | `''` | 主体文字 |
+| `image` | `string` | `''` | 可选图片地址 |
+| `text-color` | `string` | `'#333333'` | 文字颜色 |
+
+**Events**
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `(value: boolean)` | 关闭时触发，配合 `v-model` 使用 |
+| `close` | `-` | 关闭时触发 |
+
+> ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。图片请使用公开、可访问的图片地址，因图片内容、版权或第三方资源加载失败导致的问题，与本组件开发者无关。
+
+---
+
+### ContextMenu 右键菜单
+
+自定义网页右键菜单组件。将组件放入某个盒子内，右键该盒子区域即弹出自定义菜单（替代浏览器默认右键菜单），菜单显示在鼠标位置，点击菜单内容或点击其它区域自动关闭。通过 `backgroundimage` / `backgroundcolor` 设置菜单背景。
+
+```vue
+<!-- 放入一个有尺寸的盒子内，右键该区域触发 -->
+<div class="box">
+  <yk-context-menu>
+    <div>复制</div>
+    <div>粘贴</div>
+    <div>删除</div>
+  </yk-context-menu>
+</div>
+
+<!-- 自定义背景 -->
+<yk-context-menu backgroundcolor="#f0f9ff">
+  <div>选项 A</div>
+  <div>选项 B</div>
+</yk-context-menu>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `backgroundimage` | `string` | `''` | 背景图（CSS 值，如 `url('...')` 或渐变） |
+| `backgroundcolor` | `string` | `'#ffffff'` | 背景色 |
+
+**Slots**
+
+| 插槽 | 说明 |
+|------|------|
+| 默认 | 菜单内容（自定义列表或内容） |
+
+**Events**
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `open` | `-` | 菜单打开时触发 |
+| `close` | `-` | 菜单关闭时触发 |
+
+> ⚠️ **免责声明**：本组件为纯 UI 展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
+
+---
+
+### LineChart 折线图
+
+基于 ECharts 封装的折线图组件。通过 `data` 传入 `[x, y]` 二元组数组绘制折线，`data-color` 设置折线颜色，`backgroundcolor` 设置背景颜色（可带透明度）。容器默认宽 100%、高 300px。
+
+```vue
+<yk-line-chart :data="[[1, 10], [2, 20], [3, 15], [4, 30], [5, 25]]" />
+
+<!-- 字符串 x 轴 + 自定义颜色/背景 -->
+<yk-line-chart
+  :data="[['1月', 10], ['2月', 20], ['3月', 15]]"
+  data-color="#e6a23c"
+  backgroundcolor="rgba(64, 158, 255, 0.08)"
+/>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `data` | `[number \| string, number][]` | `[]` | 折线数据，`[x, y]` 二元组数组 |
+| `data-color` | `string` | `'#409eff'` | 折线颜色 |
+| `backgroundcolor` | `string` | `'transparent'` | 背景颜色（可带透明度） |
+
+> ⚠️ **免责声明**：本组件基于 ECharts 渲染，为纯前端展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
+
+---
+
+### BarChart 柱状图
+
+基于 ECharts 封装的区间柱状图组件。通过 `data` 传入 `[x1, x2, y]` 三元组数组，每个柱横跨 `x1 ~ x2`、高度为 `y`。`data-color` 设置柱体颜色，`backgroundcolor` 设置背景颜色（可带透明度）。容器默认宽 100%、高 300px。
+
+```vue
+<yk-bar-chart :data="[[1, 3, 10], [4, 6, 20], [7, 9, 15]]" />
+
+<!-- 自定义颜色/背景 -->
+<yk-bar-chart
+  :data="[[1, 4, 30], [5, 8, 18], [9, 12, 42]]"
+  data-color="#67c23a"
+  backgroundcolor="rgba(64, 158, 255, 0.08)"
+/>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `data` | `[number, number, number][]` | `[]` | 柱状图数据，`[x1, x2, y]` 三元组数组 |
+| `data-color` | `string` | `'#409eff'` | 柱体颜色 |
+| `backgroundcolor` | `string` | `'transparent'` | 背景颜色（可带透明度） |
+
+> ⚠️ **免责声明**：本组件基于 ECharts 渲染，为纯前端展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
+
+---
+
+### PieChart 饼状图
+
+基于 ECharts 封装的饼状图组件。通过 `data` 传入 `[name, value]` 二元组数组绘制饼图，每个扇区自动分配不同颜色，`backgroundcolor` 设置背景颜色（可带透明度）。容器默认宽 100%、高 300px。
+
+```vue
+<yk-pie-chart :data="[['苹果', 10], ['香蕉', 20], ['橙子', 15], ['葡萄', 30]]" />
+
+<!-- 自定义背景 -->
+<yk-pie-chart
+  :data="[['苹果', 10], ['香蕉', 20], ['橙子', 15], ['葡萄', 30]]"
+  backgroundcolor="rgba(64, 158, 255, 0.08)"
+/>
+```
+
+**Props**
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `data` | `[string, number][]` | `[]` | 饼状图数据，`[name, value]` 二元组数组 |
+| `backgroundcolor` | `string` | `'transparent'` | 背景颜色（可带透明度） |
+
+> ⚠️ **免责声明**：本组件基于 ECharts 渲染，为纯前端展示组件，不涉及外部数据接口。二次开发中若添加数据请求，请自行配置鉴权。
 
 ---
 
