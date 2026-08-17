@@ -1,11 +1,13 @@
 # YK-UI
 
-基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。当前版本 **v1.17.3**。
+基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。当前版本 **v1.17.4**。
 
 ## 安装
 
 ```bash
-pnpm install
+npm install @lodefusi/components
+# 或
+pnpm add @lodefusi/components
 ```
 
 ## 快速开始
@@ -13,8 +15,8 @@ pnpm install
 ```ts
 // main.ts
 import { createApp } from 'vue'
-import YkUI from '@ykssg/components'
-import '@ykssg/components/style'
+import YkUI from '@lodefusi/components'
+import '@lodefusi/components/style.css'
 
 const app = createApp(App)
 app.use(YkUI)
