@@ -1,6 +1,6 @@
 {
   "name": "@windlil-design/components",
-  "version": "1.11.2",
+  "version": "1.17.3",
   "type": "module",
   "scripts": {
     "build": "vite build"

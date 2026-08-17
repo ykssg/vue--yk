@@ -1,6 +1,6 @@
 # YK-UI
 
-基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。当前版本 **v1.11.2**。
+基于 Vue3 + TypeScript 的组件库，组件前缀 `<yk-xxx>`。当前版本 **v1.17.3**。
 
 ## 安装
 
